@@ -1,0 +1,7 @@
+simplecontainer.debhelper.log
+simplecontainer.postinst.debhelper
+simplecontainer.postrm.debhelper
+simplecontainer.prerm.debhelper
+simplecontainer.substvars
+simplecontainer/
+files

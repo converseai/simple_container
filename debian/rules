@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+export DH_ALWAYS_EXCLUDE=CVS:.svn:.git
+%:
+	dh $@
+
+override_dh_installinit:
+	dh_installinit --update-rcd-params='defaults 95 05'
+
+override_dh_usrlocal:

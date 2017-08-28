@@ -1,0 +1,4 @@
+sc_runtime bin/
+sc_proxy bin/
+sc_start bin/
+scripts/hnetsetup bin/
