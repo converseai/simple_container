@@ -59,3 +59,8 @@ You will need to enable ipforwading you can do this by doing
 ```
 echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
+
+To run the program 
+```
+sc_start --config <path to config json>
+```
