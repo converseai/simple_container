@@ -1,0 +1,32 @@
+#!/bin/bash
+
+IP=/sbin/ip
+BRIDGE=/sbin/brctl
+
+bridge=''
+heth=''
+ceth=''
+nspid=''
+
+while getopts 'b:h:c:p:' flag; do
+  case "${flag}" in
+    b) bridge="${OPTARG}" ;;
+    h) heth="${OPTARG}" ;;
+    c) ceth="${OPTARG}" ;;
+    p) nspid="${OPTARG}" ;;
+    *) error "Unexpected option ${flag}" ;;
+  esac
+done
+
+#Creating the veth devices
+sudo $IP link add $heth type veth peer name $ceth
+
+#Moving the eth device to container
+sudo $IP link set $ceth netns $nspid
+
+#Uping the host veth 
+sudo $IP link set $heth up 
+
+#Moving to the bridge 
+sudo $IP link set $heth master $bridge
+#sudo $BRIDGE addif $bridge $heth

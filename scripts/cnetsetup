@@ -1,0 +1,25 @@
+#!/bin/bash
+
+IP=/sbin/ip
+ceth=''
+ipaddr=''
+gateway=''
+
+while getopts 'a:g:c:' flag; do
+  case "${flag}" in
+    a) ipaddr="${OPTARG}" ;;
+    g) gateway="${OPTARG}" ;;
+    c) ceth="${OPTARG}" ;;
+    *) error "Unexpected option ${flag}" ;;
+  esac
+done
+
+#Uping the host ceth 
+$IP link set $ceth up 
+
+#Seting the ip address 
+$IP addr add $ipaddr dev $ceth 
+
+#Setting up the default gateway
+$IP route add default via $gateway
+
