@@ -131,6 +131,7 @@ func main() {
 			Uid: uint32(*uid),
 			Gid: uint32(*gid),
 		},
+		//		GidMappingsEnableSetgroups: false,
 	}
 
 	cmd.Stdin = os.Stdin
@@ -151,36 +152,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(-1)
 	}
-}
-
-type exec_retun struct {
-	success  bool
-	err      error
-	exitCode int
-}
-
-func exec_run(cmd *exec.Cmd, p **os.Process) *exec_retun {
-	ret := new(exec_retun)
-	cmd.Stdin = os.Stdin
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	ret.err = cmd.Start()
-
-	if ret.err == nil {
-		*p = cmd.Process
-		ret.err = cmd.Wait()
-		var waitStatus syscall.WaitStatus
-		if ret.err == nil {
-			ret.success = cmd.ProcessState.Success()
-			waitStatus = cmd.ProcessState.Sys().(syscall.WaitStatus)
-		} else {
-			if exitError, ok := ret.err.(*exec.ExitError); ok {
-				waitStatus = exitError.Sys().(syscall.WaitStatus)
-			}
-		}
-		ret.exitCode = waitStatus.ExitStatus()
-	}
-	return ret
 }
 
 func waitForVeth(veth string) error {
@@ -205,19 +176,18 @@ func waitForVeth(veth string) error {
 
 func setContainerNetworking(device, ip, gateway string) error {
 	cmd := exec.Command(IP_COMMAND, "link", "set", device, "up")
-	var p *os.Process
-	ret := exec_run(cmd, &p)
-	if ret.success {
+	err := cmd.Run()
+	if err == nil {
 		cmd = exec.Command(IP_COMMAND, "addr", "add", ip, "dev", device)
-		ret = exec_run(cmd, &p)
-		if ret.success {
+		err = cmd.Run()
+		if err == nil {
 			cmd = exec.Command(IP_COMMAND, "route", "add", "default", "via", gateway)
-			ret = exec_run(cmd, &p)
+			err = cmd.Run()
 		}
 	}
-	if ret.success {
+	if err == nil {
 		return nil
 	} else {
-		return ret.err
+		return err
 	}
 }

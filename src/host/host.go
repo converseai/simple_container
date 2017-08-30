@@ -38,8 +38,9 @@ type Container struct {
 }
 
 type Limits struct {
-	Mem int `json:"mem"`
-	Cpu int `json:"cpu"`
+	Mem           int `json:"mem"`
+	MemSwappiness int `json:"swapiness"`
+	Cpu           int `json:"cpu"`
 }
 
 type Proxy struct {
@@ -179,9 +180,12 @@ func main() {
 			if err == nil {
 				pid, _ := container.GetPid()
 				if spec.Container.Limits != nil {
-					cutil.SetMemoryLimit(spec.Id, spec.Container.Limits.Mem, pid)
+					memLimit := &cutil.MemoryLimits{}
+					memLimit.Memory = spec.Container.Limits.Mem
+					memLimit.Swappiness = spec.Container.Limits.MemSwappiness
+					err = cutil.SetMemoryLimit(spec.Id, memLimit, pid)
 				}
-				if spec.Container.Nework != nil {
+				if spec.Container.Nework != nil && err == nil {
 					err = setUpNetworking(pid, spec.Container.Nework)
 				}
 				// Now start the proxy
