@@ -227,11 +227,10 @@ func cleanUp(containerID string) {
 	if fsMount != nil {
 		cutil.Unmount(fsMount)
 	}
+	cutil.RemoveMemoryLimit(containerID)
 	if proxy != nil {
 		proxy.Kill()
 	}
-	cutil.RemoveMemoryLimit(containerID)
-
 }
 
 func setUpMount(containerId string, fs *FileSystem) (*cutil.Mount, error) {
