@@ -7,5 +7,4 @@ Homepage:
 
 Package: simplecontainer
 Architecture: any
-Depends: bridge-utils
 Description: A simple name container solution based on just name spaces and overlay fs
