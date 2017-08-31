@@ -39,7 +39,7 @@ type Container struct {
 
 type Limits struct {
 	Mem           int `json:"mem"`
-	MemSwappiness int `json:"swapiness"`
+	MemSwappiness int `json:"memSwappiness"`
 	Cpu           int `json:"cpu"`
 }
 
