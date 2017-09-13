@@ -54,22 +54,21 @@ func (cr *Runtime) Start(wg *sync.WaitGroup) error {
 		if wg != nil {
 			wg.Done()
 		}
-		var waitStatus syscall.WaitStatus
 		exit := &ExitCode{}
-		exit.Code = -1
+		exit.Code = 0
 		if err == nil {
-			waitStatus = cr.cmd.ProcessState.Sys().(syscall.WaitStatus)
+			exit.Code = cr.cmd.ProcessState.Sys().(syscall.WaitStatus).ExitStatus()
 		} else {
-			exit.Error = err
+
 			if exitError, ok := err.(*exec.ExitError); ok {
-				waitStatus = exitError.Sys().(syscall.WaitStatus)
+				exit.Code = exitError.Sys().(syscall.WaitStatus).ExitStatus()
+			} else {
+				exit.Code = 1
+				exit.Error = err
 			}
+
 		}
-		exit.Code = int(waitStatus)
 		cr.exitChan <- exit
-		//		if !cr.exit {
-		//			cr.killChan <- nil
-		//		}
 		close(cr.killChan)
 		close(cr.exitChan)
 	}()

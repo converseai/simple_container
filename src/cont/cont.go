@@ -145,12 +145,12 @@ func main() {
 		go handle_signal(sigc)
 		exitCode := <-process.Wait()
 		if exitCode.Error != nil {
-			fmt.Fprintf(os.Stderr, exitCode.Error.Error())
+			fmt.Fprintln(os.Stderr, exitCode.Code, exitCode.Error.Error())
 		}
 		os.Exit(exitCode.Code)
 	} else {
 		fmt.Fprintf(os.Stderr, err.Error())
-		os.Exit(-1)
+		os.Exit(1)
 	}
 }
 
